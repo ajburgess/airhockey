@@ -8,6 +8,9 @@ let message;
 g.start();
 
 function setup() {
+    g.tink.makePointer();
+    g.tink.makePointer();
+
     table = g.rectangle(1000, 500, 0xf0f0f0);
 
     puck = g.circle(50, "black");
