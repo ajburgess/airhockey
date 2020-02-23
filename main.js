@@ -40,7 +40,7 @@ function setup() {
 
     player1 = makeCircleSprite(25, 0x00ff00);
     player1.x = 50;
-    player1.y = 300;
+    player1.y = 50;
     player1.previousX = player1.x;
     player1.previousY = player1.y;
     player1.score = 0;
