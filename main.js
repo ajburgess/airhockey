@@ -8,9 +8,6 @@ let message;
 g.start();
 
 function setup() {
-    g.tink.makePointer();
-    g.tink.makePointer();
-
     table = g.rectangle(1000, 500, 0xf0f0f0);
 
     puck = g.circle(50, "black");
@@ -40,9 +37,6 @@ function setup() {
     player1.y = 300;
     player1.previousX = player1.x;
     player1.previousY = player1.y;
-    player1.draggable = true;
-    player1.interact = true;
-    player1.overlapping = false;
     player1.score = 0;
 
     player2 = g.circle(50, "blue");
@@ -51,12 +45,18 @@ function setup() {
     player2.y = 200;
     player2.previousX = player2.x;
     player2.previousY = player2.y;
-    player2.draggable = true;
-    player2.interact = true;
-    player2.overlapping = false;
     player2.score = 0;
 
     message = g.text("", "64px Futura", 0xd0d0d0, 20, 20);
+
+    let p1 = g.tink.makePointer();
+    let p2 = g.tink.makePointer();
+
+    player1.interact = true;
+    player2.interact = true;
+
+    player1.draggable = true;
+    player2.draggable = true;
 
     g.stage.addChild(table);
     g.stage.addChild(goal1);
