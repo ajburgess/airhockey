@@ -51,6 +51,7 @@ function setup() {
 
     for (player of [player1, player2]) {
         player.interactive = true;
+        player.buttonMode = true;
 
         player.mousedown = player.touchstart = function (data) {
             this.data = data;
