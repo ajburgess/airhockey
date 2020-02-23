@@ -49,17 +49,17 @@ function setup() {
 
     message = g.text("", "64px Futura", 0xd0d0d0, 20, 20);
 
-    g.tink.makeInteractive(player1);
-    g.tink.makeInteractive(player2);
-
-    g.tink.makeDraggable(player1);
-    g.tink.makeDraggable(player2);
+    player1.interact = true;
+    player2.interact = true;
 
     player1.draggable = true;
     player2.draggable = true;
 
     let p1 = g.tink.makePointer();
     let p2 = g.tink.makePointer();
+
+    player1.pointer = p1;
+    player2.pointer = p2;
 
     g.stage.addChild(table);
     g.stage.addChild(goal1);
