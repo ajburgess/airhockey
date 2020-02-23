@@ -64,7 +64,7 @@ function setup() {
 
         player.mousemove = player.touchmove = function (data) {
             if (this.dragging) {
-                this.setPosition(data.data.global.x, data.data.global.y);
+                this.setPosition(this.data.data.global.x, this.data.data.global.y);
             }
         }
     }
