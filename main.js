@@ -49,14 +49,25 @@ function setup() {
 
     message = g.text("", "64px Futura", 0xd0d0d0, 20, 20);
 
-    g.pointers.push(g.tink.makePointer());
-    g.pointers.push(g.tink.makePointer());
+    for (player of [player1, player2]) {
+        player.interactive = true;
 
-    player1.draggable = true;
-    player1.interact = true;
+        player.mousedown = player.touchstart = function (data) {
+            this.data = data;
+            this.dragging = true;
+        }
 
-    player2.draggable = true;
-    player2.interact = true;
+        player.mouseup = player.mouseupoutside = player.touchend = player.touchendoutside = function (data) {
+            this.dragging = false;
+            this.data = null;
+        }
+
+        player.mousemove = player.touchmove = function (data) {
+            if (this.dragging) {
+                this.setPosition(data.data.global.x, data.data.global.y);
+            }
+        }
+    }
 
     g.stage.addChild(table);
     g.stage.addChild(goal1);
@@ -74,7 +85,7 @@ function play() {
     g.contain(player2, { x: table.halfWidth, y: table.y, width: table.width, height: table.height }, true);
 
     for (player of [player1, player2]) {
-        if (player.pressed) {
+        if (player.dragging) {
             player.vx = (player.x - player.previousX);
             player.vy = (player.y - player.previousY);
         }
