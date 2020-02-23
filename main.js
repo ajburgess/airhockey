@@ -52,8 +52,11 @@ function setup() {
     let p1 = g.tink.makePointer();
     let p2 = g.tink.makePointer();
 
-    player1.interact = true;
-    player2.interact = true;
+    g.tink.makeInteractive(player1);
+    g.tink.makeInteractive(player2);
+
+    g.tink.makeDraggable(player1);
+    g.tink.makeDraggable(player2);
 
     player1.draggable = true;
     player2.draggable = true;
@@ -70,6 +73,8 @@ function setup() {
 }
 
 function play() {
+    g.tink.update();
+
     g.contain(player1, { x: table.x, y: table.y, width: table.halfWidth, height: table.height }, true);
     g.contain(player2, { x: table.halfWidth, y: table.y, width: table.width, height: table.height }, true);
 
