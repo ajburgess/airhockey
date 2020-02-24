@@ -29,31 +29,43 @@ function makeCircleSprite(radius, colour) {
     return sprite;
 }
 
+function makeRectangleSprite(width, height, colour) {
+    let gr = new PIXI.Graphics();
+    gr.beginFill(colour);
+    gr.lineStyle(0);
+    gr.drawRect(0, 0, width, height);
+    gr.endFill();
+    var texture = app.renderer.generateTexture(gr);
+
+    let sprite = new PIXI.Sprite(texture);
+    return sprite;
+}
+
 function setup() {
     puck = makeCircleSprite(25, 0x000000);
-    puck.vx = 5;
-    puck.vy = 5;
-    puck.x = 150;
+    puck.vx = 0;
+    puck.vy = 0;
+    puck.x = 500;
     puck.y = 250;
 
-    // goal1 = g.rectangle(puck.width * 0.70, 200, 0x808080);
-    // goal1.x = 0;
-    // goal1.y = table.height / 2 - goal1.height / 2;
+    goal1 = makeRectangleSprite(puck.width * 0.70, 200, 0x808080);
+    goal1.x = 0;
+    goal1.y = 500 / 2 - goal1.height / 2;
 
-    // goal2 = g.rectangle(puck.width * 0.70, 200, 0x808080);
-    // goal2.x = table.width - goal2.width;
-    // goal2.y = table.height / 2 - goal1.height / 2;
+    goal2 = makeRectangleSprite(puck.width * 0.70, 200, 0x808080);
+    goal2.x = 1000 - goal2.width;
+    goal2.y = 500 / 2 - goal1.height / 2;
 
-    player1 = makeCircleSprite(25, 0x00ff00);
+    player1 = makeCircleSprite(30, 0xff0000);
     player1.x = 50;
-    player1.y = 50;
+    player1.y = 250;
     player1.previousX = player1.x;
     player1.previousY = player1.y;
     player1.score = 0;
 
-    player2 = makeCircleSprite(25, 0x0000ff);
-    player2.x = 925;
-    player2.y = 200;
+    player2 = makeCircleSprite(30, 0xff0000);
+    player2.x = 950;
+    player2.y = 250;
     player2.previousX = player2.x;
     player2.previousY = player2.y;
     player2.score = 0;
@@ -83,14 +95,13 @@ function setup() {
         }
     }
 
-    app.stage.addChild(puck);
+    app.stage.addChild(goal1);
+    app.stage.addChild(goal2);
     app.stage.addChild(player1);
     app.stage.addChild(player2);
+    app.stage.addChild(puck);
 
-    // g.stage.addChild(goal1);
-    // g.stage.addChild(goal2);
     // g.stage.addChild(message);
-    // g.stage.addChild(puck);
 
     app.ticker.add(delta => gameLoop(delta));
 }
@@ -121,6 +132,21 @@ function play(delta) {
         b.movingCircleCollision(player, puck);
     }
 
+    if (b.hitTestPoint(puck, goal1)) {
+        player2.score++;
+        puck.x = 200;
+        puck.y = 250;
+        puck.vx = 0;
+        puck.vy = 0;
+    }
+    else if (b.hitTestPoint(puck, goal2)) {
+        player1.score++;
+        puck.x = 800;
+        puck.y = 250;
+        puck.vx = 0;
+        puck.vy = 0;
+    }
+
     puck.vx = puck.vx * 0.995;
     puck.vy = puck.vy * 0.995;
 
@@ -133,26 +159,7 @@ function play(delta) {
 setup();
 
 // function play() {
-//     g.contain(player1, { x: 0, y: 0, width: 500, height: 500 }, true);
-//     g.contain(player2, { x: 500, y: 0, width: 500, height: 500 }, true);
 
-//     for (player of [player1, player2]) {
-//         if (player.dragging) {
-//             player.vx = (player.x - player.previousX);
-//             player.vy = (player.y - player.previousY);
-//         }
-//         else {
-//             player.vx = player.vx * 0.95;
-//             player.vy = player.vy * 0.95;
-//             g.move(player);
-//         }
-//         player.previousX = player.x;
-//         player.previousY = player.y;
-
-//         g.bump.movingCircleCollision(player, puck);
-
-//         puck.vx = puck.vx * 0.995;
-//         puck.vy = puck.vy * 0.995;
 
 //         if (g.bump.hitTestPoint(puck, goal1)) {
 //             player2.score++;
