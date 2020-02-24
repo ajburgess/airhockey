@@ -64,8 +64,8 @@ function setup() {
         player.interactive = true;
         player.buttonMode = true;
 
-        player.mousedown = player.touchstart = function (data) {
-            this.data = data;
+        player.mousedown = player.touchstart = function (event) {
+            this.data = event.data;
             this.dragging = true;
         }
 
@@ -74,10 +74,11 @@ function setup() {
             this.data = null;
         }
 
-        player.mousemove = player.touchmove = function (data) {
+        player.mousemove = player.touchmove = function (event) {
             if (this.dragging) {
-                this.position.x = this.data.data.global.x;
-                this.position.y = this.data.data.global.y;
+                const newPosition = this.data.getLocalPosition(this.parent);
+                this.position.x = newPosition.x;
+                this.position.y = newPosition.y;            
             }
         }
     }
