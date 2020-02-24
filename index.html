@@ -8,8 +8,6 @@
         let g = hexi(1000, 500, setup);
         g.backgroundColor = 0xf0f0f0;
         g.scaleToWindow();
-        g.tink.makePointer();
-        g.tink.makePointer();
 
         let table, player1, player2, puck, goal1, goal2;
         let message;
@@ -56,6 +54,7 @@
             message = g.text("", "64px Futura", 0xd0d0d0, 20, 20);
 
             for (player of [player1, player2]) {
+                player.interact = true;
                 player.interactive = true;
                 player.buttonMode = true;
 
