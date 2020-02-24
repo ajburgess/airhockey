@@ -5,6 +5,10 @@ app.renderer.backgroundColor = 0xf0f0f0;
 //Add the canvas that Pixi automatically created for you to the HTML document
 document.body.appendChild(app.view);
 
+scaleToWindow(app.renderer.view, 0x000000);
+
+let b = new PIXI.extras.Bump();
+
 let table, player1, player2, puck, goal1, goal2;
 let message;
 
@@ -19,14 +23,16 @@ function makeCircleSprite(radius, colour) {
     let sprite = new PIXI.Sprite(texture);
     sprite.anchor.x = 0.5;
     sprite.anchor.y = 0.5;
+    sprite.circular = true;
+    sprite.radius = radius;
 
     return sprite;
 }
 
 function setup() {
     puck = makeCircleSprite(25, 0x000000);
-    puck.vx = 0;
-    puck.vy = 0;
+    puck.vx = 5;
+    puck.vy = 5;
     puck.x = 150;
     puck.y = 250;
 
@@ -70,8 +76,8 @@ function setup() {
 
         player.mousemove = player.touchmove = function (data) {
             if (this.dragging) {
-                this.position.x = this.data.data.global.x;
-                this.position.y = this.data.data.global.y;
+                this.position.x = data.data.global.x;
+                this.position.y = data.data.global.y;
             }
         }
     }
@@ -93,43 +99,37 @@ function gameLoop(delta) {
 }
 
 function play(delta) {
-    contain(player1, { x: 0, y: 0, width: 500, height: 500 }, true);
-    contain(player2, { x: 500, y: 0, width: 500, height: 500 }, true);
+    b.contain(player1, { x: 0, y: 0, width: 500, height: 500 }, true);
+    b.contain(player2, { x: 500, y: 0, width: 1000, height: 500 }, true);
+
+    for (player of [player1, player2]) {
+        if (player.dragging) {
+            player.vx = (player.position.x - player.previousX);
+            player.vy = (player.position.y - player.previousY);
+        }
+        else {
+            player.vx = player.vx * 0.95;
+            player.vy = player.vy * 0.95;
+            player.position.x += player.vx | 0;
+            player.position.y += player.vy | 0;
+        }
+
+        player.previousX = player.position.x;
+        player.previousY = player.position.y;
+
+        b.movingCircleCollision(player, puck);
+    }
+
+    puck.vx = puck.vx * 0.995;
+    puck.vy = puck.vy * 0.995;
+
+    puck.position.x += puck.vx;
+    puck.position.y += puck.vy;
+
+    b.contain(puck, { x: 0, y: 0, width: 1000, height: 500 }, true);
 }
 
 setup();
-
-function contain(sprite, container) {
-
-    let collision = undefined;
-
-    //Left
-    if (sprite.x < container.x) {
-        sprite.x = container.x;
-        collision = "left";
-    }
-
-    //Top
-    if (sprite.y < container.y) {
-        sprite.y = container.y;
-        collision = "top";
-    }
-
-    //Right
-    if (sprite.x + sprite.width > container.width) {
-        sprite.x = container.width - sprite.width;
-        collision = "right";
-    }
-
-    //Bottom
-    if (sprite.y + sprite.height > container.height) {
-        sprite.y = container.height - sprite.height;
-        collision = "bottom";
-    }
-
-    //Return the `collision` value
-    return collision;
-}
 
 // function play() {
 //     g.contain(player1, { x: 0, y: 0, width: 500, height: 500 }, true);
@@ -175,3 +175,86 @@ function contain(sprite, container) {
 //     message.text = `${player1.score} - ${player2.score}`;
 //     g.stage.putCenter(message);
 // }
+
+function scaleToWindow(canvas, backgroundColor) {
+    var newStyle = document.createElement("style");
+    var style = "* {padding: 0; margin: 0}";
+    newStyle.appendChild(document.createTextNode(style));
+    document.head.appendChild(newStyle);
+
+    var scaleX, scaleY, scale, center;
+
+    //1. Scale the canvas to the correct size
+    //Figure out the scale amount on each axis
+    scaleX = window.innerWidth / canvas.offsetWidth;
+    scaleY = window.innerHeight / canvas.offsetHeight;
+
+    //Scale the canvas based on whichever value is less: `scaleX` or `scaleY`
+    scale = Math.min(scaleX, scaleY);
+    canvas.style.transformOrigin = "0 0";
+    canvas.style.transform = "scale(" + scale + ")";
+
+    //2. Center the canvas.
+    //Decide whether to center the canvas vertically or horizontally.
+    //Wide canvases should be centered vertically, and 
+    //square or tall canvases should be centered horizontally
+    if (canvas.offsetWidth > canvas.offsetHeight) {
+        if (canvas.offsetWidth * scale < window.innerWidth) {
+            center = "horizontally";
+        } else {
+            center = "vertically";
+        }
+    } else {
+        if (canvas.offsetHeight * scale < window.innerHeight) {
+            center = "vertically";
+        } else {
+            center = "horizontally";
+        }
+    }
+
+    //Center horizontally (for square or tall canvases)
+    var margin;
+    if (center === "horizontally") {
+        margin = (window.innerWidth - canvas.offsetWidth * scale) / 2;
+        canvas.style.marginTop = 0 + "px";
+        canvas.style.marginBottom = 0 + "px";
+        canvas.style.marginLeft = margin + "px";
+        canvas.style.marginRight = margin + "px";
+    }
+
+    //Center vertically (for wide canvases) 
+    if (center === "vertically") {
+        margin = (window.innerHeight - canvas.offsetHeight * scale) / 2;
+        canvas.style.marginTop = margin + "px";
+        canvas.style.marginBottom = margin + "px";
+        canvas.style.marginLeft = 0 + "px";
+        canvas.style.marginRight = 0 + "px";
+    }
+
+    //3. Remove any padding from the canvas  and body and set the canvas
+    //display style to "block"
+    canvas.style.paddingLeft = 0 + "px";
+    canvas.style.paddingRight = 0 + "px";
+    canvas.style.paddingTop = 0 + "px";
+    canvas.style.paddingBottom = 0 + "px";
+    canvas.style.display = "block";
+
+    //4. Set the color of the HTML body background
+    document.body.style.backgroundColor = backgroundColor;
+
+    //Fix some quirkiness in scaling for Safari
+    var ua = navigator.userAgent.toLowerCase();
+    if (ua.indexOf("safari") != -1) {
+        if (ua.indexOf("chrome") > -1) {
+            // Chrome
+        } else {
+            // Safari
+            //canvas.style.maxHeight = "100%";
+            //canvas.style.minHeight = "100%";
+        }
+    }
+
+    //5. Return the `scale` value. This is important, because you'll nee this value 
+    //for correct hit testing between the pointer and sprites
+    return scale;
+}
