@@ -67,10 +67,11 @@
                     this.data = null;
                 }
 
-                player.mousemove = player.touchmove = function (data) {
+                player.mousemove = player.touchmove = function (event) {
                     if (this.dragging) {
-                        let newPosition = this.data.getLocalPosition(this.parent);
-                        this.setPosition(newPosition.x, newPosition.y);
+                        const newPosition = this.data.getLocalPosition(this.parent);
+                        this.position.x = newPosition.x;
+                        this.position.y = newPosition.y;
                     }
                 }
             }
