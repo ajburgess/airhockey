@@ -76,8 +76,8 @@ function setup() {
 
         player.mousemove = player.touchmove = function (data) {
             if (this.dragging) {
-                this.position.x = data.data.global.x;
-                this.position.y = data.data.global.y;
+                this.position.x = this.data.data.global.x;
+                this.position.y = this.data.data.global.y;
             }
         }
     }
