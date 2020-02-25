@@ -27185,6 +27185,7 @@ InteractionManager.prototype.processTouchStart = function ( displayObject, hit, 
 {
     if(hit)
     {
+        console.log(identifier);
         displayObject._touchDown = identifier;
         this.dispatchEvent( displayObject, 'touchstart', this.eventData );
     }
