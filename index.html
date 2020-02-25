@@ -57,26 +57,29 @@
 
             for (player of [player1, player2]) {
                 player.interact = true;
-                player.interactive = true;
-                player.buttonMode = true;
+                player.draggable = true;
 
-                player.mousedown = player.touchstart = function (event) {
-                    this.data = event.data;
-                    this.dragging = true;
-                }
+                // player.interact = true;
+                // player.interactive = true;
+                // player.buttonMode = true;
 
-                player.mouseup = player.mouseupoutside = player.touchend = player.touchendoutside = function (data) {
-                    this.dragging = false;
-                    this.data = null;
-                }
+                // player.mousedown = player.touchstart = function (event) {
+                //     this.data = event.data;
+                //     this.dragging = true;
+                // }
 
-                player.mousemove = player.touchmove = function (event) {
-                    if (this.dragging) {
-                        const newPosition = this.data.getLocalPosition(this.parent);
-                        this.position.x = newPosition.x;
-                        this.position.y = newPosition.y;
-                    }
-                }
+                // player.mouseup = player.mouseupoutside = player.touchend = player.touchendoutside = function (data) {
+                //     this.dragging = false;
+                //     this.data = null;
+                // }
+
+                // player.mousemove = player.touchmove = function (event) {
+                //     if (this.dragging) {
+                //         const newPosition = this.data.getLocalPosition(this.parent);
+                //         this.position.x = newPosition.x;
+                //         this.position.y = newPosition.y;
+                //     }
+                // }
             }
 
             g.stage.addChild(table);
@@ -95,7 +98,7 @@
             g.contain(player2, { x: table.halfWidth, y: table.y, width: table.width, height: table.height }, true);
 
             for (player of [player1, player2]) {
-                if (player.dragging) {
+                if (player.dragging || player.pressed) {
                     player.vx = (player.x - player.previousX);
                     player.vy = (player.y - player.previousY);
                 }
