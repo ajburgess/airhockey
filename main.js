@@ -26,19 +26,19 @@ function setup() {
     goal2.x = table.width - goal2.width;
     goal2.y = table.height / 2 - goal1.height / 2;
 
-    player1 = g.circle(50, "red");
+    player1 = g.circle(80, "red");
     player1.anchor.x = 0.5;
     player1.anchor.y = 0.5;
-    player1.x = 75;
+    player1.x = 100;
     player1.y = 250;
     player1.previousX = player1.x;
     player1.previousY = player1.y;
     player1.score = 0;
 
-    player2 = g.circle(50, "red");
+    player2 = g.circle(80, "red");
     player2.anchor.x = 0.5;
     player2.anchor.y = 0.5;
-    player2.x = 925;
+    player2.x = 900;
     player2.y = 250;
     player2.previousX = player2.x;
     player2.previousY = player2.y;
