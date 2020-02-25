@@ -26846,7 +26846,7 @@ InteractionManager.prototype.mapPositionToPoint = function ( point, x, y )
  * @param  {boolean} hitTest this indicates if the objects inside should be hit test against the point
  * @return {boolean} returns true if the displayObject hit the point
  */
-InteractionManager.prototype.processInteractive = function (point, displayObject, func, hitTest, interactive)
+InteractionManager.prototype.processInteractive = function (point, displayObject, func, hitTest, interactive, identifier)
 {
     if(!displayObject || !displayObject.visible)
     {
@@ -26884,7 +26884,7 @@ InteractionManager.prototype.processInteractive = function (point, displayObject
             var child = children[i];
 
             // time to get recursive.. if this function will return if somthing is hit..
-            if(this.processInteractive(point, child, func, hitTest, interactiveParent))
+            if(this.processInteractive(point, child, func, hitTest, interactiveParent, identifier))
             {
                 // its a good idea to check if a child has lost its parent.
                 // this means it has been removed whilst looping so its best
@@ -26931,7 +26931,7 @@ InteractionManager.prototype.processInteractive = function (point, displayObject
 
         if(displayObject.interactive)
         {
-            func(displayObject, hit); 
+            func(displayObject, hit, identifier); 
         }
     }
 
@@ -27168,7 +27168,7 @@ InteractionManager.prototype.onTouchStart = function (event)
         this.eventData.data = touchData;
         this.eventData.stopped = false;
 
-        this.processInteractive( touchData.global, this.renderer._lastObjectRendered, this.processTouchStart, true );
+        this.processInteractive( touchData.global, this.renderer._lastObjectRendered, this.processTouchStart, true, null, touchData.identifier );
 
         this.returnTouchData( touchData );
     }
@@ -27181,11 +27181,11 @@ InteractionManager.prototype.onTouchStart = function (event)
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
-InteractionManager.prototype.processTouchStart = function ( displayObject, hit )
+InteractionManager.prototype.processTouchStart = function ( displayObject, hit, identifier )
 {
     if(hit)
     {
-        displayObject._touchDown = true;
+        displayObject._touchDown = identifier;
         this.dispatchEvent( displayObject, 'touchstart', this.eventData );
     }
 };
@@ -27219,7 +27219,7 @@ InteractionManager.prototype.onTouchEnd = function (event)
         this.eventData.stopped = false;
 
 
-        this.processInteractive( touchData.global, this.renderer._lastObjectRendered, this.processTouchEnd, true );
+        this.processInteractive( touchData.global, this.renderer._lastObjectRendered, this.processTouchEnd, true, null, touchData.identifier );
 
         this.returnTouchData( touchData );
     }
@@ -27232,13 +27232,13 @@ InteractionManager.prototype.onTouchEnd = function (event)
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
-InteractionManager.prototype.processTouchEnd = function ( displayObject, hit )
+InteractionManager.prototype.processTouchEnd = function ( displayObject, hit, identifier )
 {
     if(hit)
     {
         this.dispatchEvent( displayObject, 'touchend', this.eventData );
 
-        if( displayObject._touchDown )
+        if( displayObject._touchDown == identifier )
         {
             displayObject._touchDown = false;
             this.dispatchEvent( displayObject, 'tap', this.eventData );
@@ -27246,7 +27246,7 @@ InteractionManager.prototype.processTouchEnd = function ( displayObject, hit )
     }
     else
     {
-        if( displayObject._touchDown )
+        if( displayObject._touchDown == identifier )
         {
             displayObject._touchDown = false;
             this.dispatchEvent( displayObject, 'touchendoutside', this.eventData );

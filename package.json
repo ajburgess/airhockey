@@ -8,7 +8,5 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "pixi-plugin-bump": "^1.1.8"
-  }
+  "dependencies": {}
 }
