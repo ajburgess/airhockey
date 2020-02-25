@@ -27154,12 +27154,12 @@ InteractionManager.prototype.onTouchStart = function (event)
         event.preventDefault();
     }
 
-    var changedTouches = event.changedTouches;
-    var cLength = changedTouches.length;
+    var targetTouches = event.targetTouches; // not changedTouches
+    var cLength = targetTouches.length;
 
     for (var i=0; i < cLength; i++)
     {
-        var touchEvent = changedTouches[i];
+        var touchEvent = targetTouches[i];
         //TODO POOL
         var touchData = this.getTouchData( touchEvent );
 
@@ -27268,12 +27268,12 @@ InteractionManager.prototype.onTouchMove = function (event)
         event.preventDefault();
     }
 
-    var changedTouches = event.changedTouches;
-    var cLength = changedTouches.length;
+    var targetTouches = event.targetTouches;
+    var cLength = targetTouches.length;
 
     for (var i=0; i < cLength; i++)
     {
-        var touchEvent = changedTouches[i];
+        var touchEvent = targetTouches[i];
 
         var touchData = this.getTouchData( touchEvent );
 
@@ -27282,7 +27282,7 @@ InteractionManager.prototype.onTouchMove = function (event)
         this.eventData.data = touchData;
         this.eventData.stopped = false;
 
-        this.processInteractive( touchData.global, this.renderer._lastObjectRendered, this.processTouchMove, this.moveWhenInside );
+        this.processInteractive( touchData.global, this.renderer._lastObjectRendered, this.processTouchMove, this.moveWhenInside, null, touchData.identifier );
 
         this.returnTouchData( touchData );
     }
@@ -27295,11 +27295,12 @@ InteractionManager.prototype.onTouchMove = function (event)
  * @param hit {boolean} the result of the hit test on the display object
  * @private
  */
-InteractionManager.prototype.processTouchMove = function ( displayObject, hit )
+InteractionManager.prototype.processTouchMove = function ( displayObject, hit, identifier )
 {
-    if(!this.moveWhenInside || hit)
-    {
-        this.dispatchEvent( displayObject, 'touchmove', this.eventData);
+    if (displayObject._touchDown == identifier) {
+        if (!this.moveWhenInside || hit) {
+            this.dispatchEvent(displayObject, 'touchmove', this.eventData);
+        }
     }
 };
 
